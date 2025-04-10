@@ -3,6 +3,10 @@ name: VSBuild Reusable Workflow
 on:
   workflow_call:
     inputs:
+      runsOn:
+        required: true
+        type: string
+        default: "windows-latest"
       logProjectEvents:
         required: false
         type: boolean
@@ -50,7 +54,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ${{ inputs.runsOn }}
 
     steps:
       - name: Checkout Repository
@@ -76,7 +80,7 @@ jobs:
           }
           
           if (${{ inputs.createLogFile }}) {
-            $logFile = "$env:BUILD_ ARTIFACTSTAGINGDIRECTORYbuild.log"
+            $logFile = "$env:BUILD_ARTIFACTSTAGINGDIRECTORYbuild.log"
             $vsbuildCmd += " /fl /flp:logfile=`"$logFile`";verbosity=${{ inputs.logFileVerbosity }}"
           }
           
@@ -91,4 +95,3 @@ jobs:
           Write-Host "Executing: $vsbuildCmd"
           Invoke-Expression $vsbuildCmd
         shell: pwsh
-
